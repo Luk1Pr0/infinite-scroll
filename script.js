@@ -47,7 +47,18 @@ async function getPhotos() {
     } catch (error) {
 
     }
-};
+}
+
+//If scroll position is near the bottom of the page, then load more photos
+
+window.addEventListener("scroll",() => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight -1000) {
+        console.log(window.innerHeight);
+        getPhotos();
+    } else {
+
+    }
+});
 
 //Invoke function
 getPhotos();
