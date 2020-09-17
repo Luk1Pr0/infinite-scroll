@@ -1,11 +1,25 @@
 const imageContainer = document.getElementById("image-container");
 const loader = document.getElementById("loader");
+
 let photosArray = [];
+let ready = false;
+let imagesLoaded = 0;
+let totalImages = 0;
 
 // Unsplash API
-const photoCount = 10;
+const photoCount = 30;
 const apiKey = "NNMn0h365LY3PDQJDWV2Pq3IjgBOWlas3xtUTyuhsRI";
 const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${photoCount}`;
+
+//Check if all images have been loaded
+function imageLoaded() {
+    imagesLoaded++;
+    console.log(imagesLoaded);
+    if (imagesLoaded === totalImages) {
+        ready = true;
+        loader.hidden = true;
+    }
+}
 
 // Helper function to set attributes on DOM elements
 const setAttributes = (element, attributes) => {
@@ -16,6 +30,8 @@ const setAttributes = (element, attributes) => {
 
 // Create elements for links and photos, add them to DOM
 function displayPhotos() {
+    imagesLoaded = 0;
+    totalImages = photosArray.length;
     // Run function forEach object in photosArray
     photosArray.forEach((photo) => {
         // Create <a> to link to unsplash
@@ -31,7 +47,8 @@ function displayPhotos() {
             alt: photo.alt_description,
             title: photo.alt_description,
         });
-        console.log(img);
+        //Event listener that checks when each image is finished loading
+        img.addEventListener("load", imageLoaded);
         // Put <img> inside <a>, then put both into imageContainer
         item.appendChild(img);
         imageContainer.appendChild(item);
@@ -50,10 +67,9 @@ async function getPhotos() {
 }
 
 //If scroll position is near the bottom of the page, then load more photos
-
-window.addEventListener("scroll",() => {
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight -1000) {
-        console.log(window.innerHeight);
+window.addEventListener("scroll", () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight-1000 && ready) {
+        ready = false;
         getPhotos();
     } else {
 
